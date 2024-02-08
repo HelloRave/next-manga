@@ -26,10 +26,11 @@ model Manga {
     id                        String     @id @default(uuid())
     author                    Author     @relation(fields: [authorId], references: [id])
     authorId                  String
-    title                     String
+    title                     String     @unique
     description               String
     ongoing                   Boolean
     animeAdaptaion            Boolean
+    firstPublished            DateTime
     likes                     Int?
     rating                    Float?
     User_UserFavouritedMangas User[]     @relation("Favourited")
