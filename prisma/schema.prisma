@@ -11,36 +11,47 @@ datasource db {
 }
 
 model User {
-    id                         String    @id @default(uuid())
+    id                         String   @id @default(uuid())
     name                       String?
-    email                      String    @unique
+    email                      String   @unique
     password                   String
-    role                       String?   @default("User")
-    createdAt                  DateTime  @default(now())
-    updatedAt                  DateTime  @updatedAt
-    Manga_UserFavouritedMangas Manga[]   @relation("Favourited")
-    Manga_UserCommentMangas    Comment[]
+    role                       String?  @default("User")
+    createdAt                  DateTime @default(now())
+    updatedAt                  DateTime @updatedAt
+    Manga_UserFavouritedMangas Manga[]  @relation("Favourited")
+    Manga_UserReviewMangas     Review[]
 }
 
 model Manga {
     id                        String     @id @default(uuid())
+    author                    Author     @relation(fields: [authorId], references: [id])
+    authorId                  String
     title                     String
     description               String
-    likes                     Int
-    rating                    Float
+    ongoing                   Boolean
+    animeAdaptaion            Boolean
+    likes                     Int?
+    rating                    Float?
     User_UserFavouritedMangas User[]     @relation("Favourited")
-    User_UserCommentMangas    Comment[]
+    User_UserReviewMangas     Review[]
     categories                Category[]
+}
+
+model Author {
+    id     String  @id @default(uuid())
+    name   String  @unique
+    mangas Manga[]
 }
 
 model Category {
     id     String  @id @default(uuid())
-    name   String
+    name   String  @unique
     mangas Manga[]
 }
 
-model Comment {
+model Review {
     description String
+    rating      Int
     user        User   @relation(fields: [userId], references: [id])
     userId      String
     manga       Manga  @relation(fields: [mangaId], references: [id])
