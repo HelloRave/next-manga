@@ -6,36 +6,76 @@ generator client {
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("POSTGRES_PRISMA_URL")
+    provider  = "postgresql"
+    url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+    directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+model Account {
+    id                String  @id @default(cuid())
+    userId            String
+    type              String
+    provider          String
+    providerAccountId String
+    refresh_token     String? @db.Text
+    access_token      String? @db.Text
+    expires_at        Int?
+    token_type        String?
+    scope             String?
+    id_token          String? @db.Text
+    session_state     String?
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@unique([provider, providerAccountId])
+}
+
+model Session {
+    id           String   @id @default(cuid())
+    sessionToken String   @unique
+    userId       String
+    expires      DateTime
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model User {
-    id                         String   @id @default(uuid())
-    name                       String?
-    email                      String   @unique
-    password                   String
-    role                       String?  @default("User")
-    createdAt                  DateTime @default(now())
-    updatedAt                  DateTime @updatedAt
-    Manga_UserFavouritedMangas Manga[]  @relation("Favourited")
-    Manga_UserReviewMangas     Review[]
+    id            String    @id @default(uuid())
+    name          String?
+    email         String    @unique
+    emailVerified DateTime?
+    image         String?
+    password      String
+    role          String?   @default("User")
+    createdAt     DateTime  @default(now())
+    updatedAt     DateTime  @updatedAt
+    favourites    Manga[]   @relation("Favourited")
+    reviews       Review[]
+    Account       Account[]
+    Session       Session[]
+}
+
+model VerificationToken {
+    identifier String
+    token      String   @unique
+    expires    DateTime
+
+    @@unique([identifier, token])
 }
 
 model Manga {
-    id                        String     @id @default(uuid())
-    author                    Author     @relation(fields: [authorId], references: [id])
-    authorId                  String
-    title                     String     @unique
-    description               String
-    ongoing                   Boolean
-    animeAdaptaion            Boolean
-    firstPublished            DateTime
-    likes                     Int?
-    rating                    Float?
-    User_UserFavouritedMangas User[]     @relation("Favourited")
-    User_UserReviewMangas     Review[]
-    categories                Category[]
+    id             String     @id @default(uuid())
+    author         Author     @relation(fields: [authorId], references: [id])
+    authorId       String
+    title          String     @unique
+    description    String
+    ongoing        Boolean
+    animeAdaptaion Boolean
+    firstPublished DateTime
+    likes          Int?
+    rating         Float?
+    favourites     User[]     @relation("Favourited")
+    reviews        Review[]
+    categories     Category[]
 }
 
 model Author {

@@ -6,6 +6,7 @@ import bcrypt from "bcrypt";
 import { prisma } from "@/lib/prisma";
 
 export const options: NextAuthOptions = {
+    // adapter: PrismaAdapter(Prisma) as Adapter,
     pages: {
         signIn: '/auth/signin',
     },
