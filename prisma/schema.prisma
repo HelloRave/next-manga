@@ -11,31 +11,31 @@ datasource db {
 }
 
 model User {
-    id                         String   @id @default(uuid())
-    name                       String?
-    email                      String   @unique
-    password                   String
-    role                       String?  @default("User")
-    createdAt                  DateTime @default(now())
-    updatedAt                  DateTime @updatedAt
-    Manga_UserFavouritedMangas Manga[]  @relation("Favourited")
-    Manga_UserReviewMangas     Review[]
+    id         String   @id @default(uuid())
+    name       String?
+    email      String   @unique
+    password   String
+    role       String?  @default("User")
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @updatedAt
+    favourties Manga[]  @relation("Favourited")
+    reviews    Review[]
 }
 
 model Manga {
-    id                        String     @id @default(uuid())
-    author                    Author     @relation(fields: [authorId], references: [id])
-    authorId                  String
-    title                     String     @unique
-    description               String
-    ongoing                   Boolean
-    animeAdaptaion            Boolean
-    firstPublished            DateTime
-    likes                     Int?
-    rating                    Float?
-    User_UserFavouritedMangas User[]     @relation("Favourited")
-    User_UserReviewMangas     Review[]
-    categories                Category[]
+    id             String     @id @default(uuid())
+    author         Author     @relation(fields: [authorId], references: [id])
+    authorId       String
+    title          String     @unique
+    description    String
+    ongoing        Boolean
+    animeAdaptaion Boolean
+    firstPublished DateTime
+    likes          Int?
+    rating         Float?
+    favourites     User[]     @relation("Favourited")
+    reviews        Review[]
+    categories     Category[]
 }
 
 model Author {
